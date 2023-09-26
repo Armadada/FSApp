@@ -1,0 +1,53 @@
+services:
+  client-react-nginx:
+    build: ./client-react/
+    init: true
+    networks:
+    - frontend
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+  api-node:
+    build: ./api-node/
+    init: true
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://postgres:MOMOMOLILI@db:5432/postgres
+    networks:
+      - frontend
+      - backend
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+  api-golang:
+    build: ./api-golang/
+    init: true
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://postgres:MOMOMOLILI@db:5432/postgres
+    networks:
+      - frontend
+      - backend
+    ports:
+      - 5050:5050
+    restart: unless-stopped
+  db:
+    image: postgres:15.1-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=MOMOMOLILI
+    networks:
+      - backend
+    ports:
+      - 5432:5432
+volumes:
+  pgdata:
+networks:
+  frontend:
+  backend:
+  
+    
+
